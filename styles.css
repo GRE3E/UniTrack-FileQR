@@ -35,6 +35,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 2rem;
 }
 
@@ -47,6 +48,7 @@ body {
     max-width: 600px;
     text-align: center;
     transition: transform 0.3s ease;
+    margin-top: 2rem;
 }
 
 .upload-card:hover {
