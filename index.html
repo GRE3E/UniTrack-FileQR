@@ -3,29 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUbir Archivo</title>
+    <title>UniTrack - Subir Archivo</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="icon" href="Upload-Icon-Image-Free-PNG.png"  type="image/x-icon"> 
-
-
+    <link rel="icon" href="Upload-Icon-Image-Free-PNG.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <div class="upload-card">
             <div class="upload-icon">
-                <img src="gif1.gif" alt="Subir archivo" class="upload-gif">
+                <img src="subir archivo.gif" alt="Subir archivo" class="upload-gif">
             </div>
-            <h1>SUBIR ARCHIVO</h1>
-            <p class="subtext">Formatos soportados: PDF, JPG, PNG, DOCX y TROYANO</p>
+            <h2 class="upload-title">SUBIR ARCHIVO</h2>
+            <p class="subtext">Formatos soportados: PDF, JPG, PNG</p>
             
             <form id="uploadForm" class="dropzone">
                 <input type="file" id="fileInput" class="file-input" />
                 <label for="fileInput" class="upload-area">
+                    <div class="drag-overlay" id="dragOverlay"></div>
+                    <i class="fas fa-cloud-upload-alt upload-icon-large"></i>
                     <span class="upload-cta">Seleccionar archivo</span>
-                    <span class="drag-text">o arrástralo aquí.</span>
+                    <span class="drag-text">o arrástralo aquí</span>
                 </label>
             </form>
+
+            <div class="file-list-container" id="fileListContainer">
+                <!-- Los archivos seleccionados se añadirán aquí dinámicamente -->
+            </div>
+
+            <button class="send-button" id="sendFilesBtn" style="display: none;">Enviar Archivos</button>
+
+            <div class="upload-progress" id="uploadProgress">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Procesando...</p>
+            </div>
         </div>
     </div>
 
