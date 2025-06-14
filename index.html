@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUbir Archivo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="Upload-Icon-Image-Free-PNG.png"  type="image/x-icon"> 
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="upload-card">
+            <div class="upload-icon">
+                <img src="gif1.gif" alt="Subir archivo" class="upload-gif">
+            </div>
+            <h1>SUBIR ARCHIVO</h1>
+            <p class="subtext">Formatos soportados: PDF, JPG, PNG, DOCX y TROYANO</p>
+            
+            <form id="uploadForm" class="dropzone">
+                <input type="file" id="fileInput" class="file-input" />
+                <label for="fileInput" class="upload-area">
+                    <span class="upload-cta">Seleccionar archivo</span>
+                    <span class="drag-text">o arrástralo aquí.</span>
+                </label>
+            </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="check-animation">
+                <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="26" cy="26" r="25" fill="#235bcb" stroke="#235bcb" stroke-width="2"/>
+                    <path d="M15 26L22 33L37 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2>¡Subida exitosa!</h2>
+            <p>Tu archivo se ha cargado correctamente.</p>
+            <button id="closeModal" class="modal-btn">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
