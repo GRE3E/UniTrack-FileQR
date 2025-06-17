@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ hash: qrCodeMessage, tipo: 'TU_TIPO' }) // Cambia 'TU_TIPO' según tu lógica
+                        body: JSON.stringify({ hash: qrCodeMessage}) // Cambia 'TU_TIPO' según tu lógica
                     })
                     .then(res => res.json())
                     .then(data => {
