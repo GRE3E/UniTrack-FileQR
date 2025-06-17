@@ -416,25 +416,55 @@ body {
 
 .container {
   padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .upload-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(6, 111, 249, 0.077);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(15px);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 3rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 450px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
-.qr-title {
-  font-size: 1.8rem;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
+.title-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease;
+  border: 1px solid rgba(0, 191, 255, 0.407);
+  
+  /* Nueva fuente y estilo */
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
   font-weight: 600;
+  color: #1f3b56;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+
+.title-box img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.qr-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #000000;
   letter-spacing: 1px;
 }
 
@@ -445,10 +475,73 @@ body {
 
 #qr-reader {
   width: 100%;
-  max-width: 300px;
+  max-width: 400px;
   aspect-ratio: 1/1;
   border-radius: 15px;
   overflow: hidden;
-  border: 4px solid #06b9f433;
-  background-color: #ffffff22;
+  border: 2px solid #ffffff33;
+  background-color: #00000022;
+}
+
+/* Animación */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.qr-reader-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  aspect-ratio: 4/3; /* Relación más cercana a la webcam */
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+#qr-reader {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Marco escáner centrado 
+.scanner-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 50%;
+  border: 2px solid #00ffae;
+  border-radius: 10px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #00ffae;
+  animation: pulseFrame 1.5s ease-in-out infinite;
+} OPCIONAL SI GUSTAN*/
+
+@keyframes pulseFrame {
+  0% { box-shadow: 0 0 5px #00ffae; }
+  50% { box-shadow: 0 0 15px #00ffae; }
+  100% { box-shadow: 0 0 5px #00ffae; }
+}
+.gif-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: screen;
 }

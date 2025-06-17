@@ -12,15 +12,22 @@
 <body>
   <div class="container">
     <div class="upload-card">
-      <!-- TÍTULO -->
-        <h2 class="qr-title">Escanee un QR por favor</h2>
-
+      
+      <!-- TÍTULO CON GIF -->
+      <div class="title-box">
+        <img src="gif1.gif" alt="GIF animado">
+        <div class="qr-title">Escanee su codigo QR</div>
+      </div>
 
       <!-- LECTOR QR -->
-       
-     <div class="qr-reader-container">
-    <div id="qr-reader"></div>
+  <div class="qr-reader-wrapper">
+  <div id="qr-reader"></div>
+  <div class="scanner-frame">
+    <img src="../UniTrack-FileQR/subir archivo.gif" alt="GIF subir archivo" class="gif-overlay" />
   </div>
+</div>
+
+      
     </div>
   </div>
 
@@ -31,12 +38,11 @@
       const config = { fps: 10, qrbox: 250 };
 
       qrReader.start(
-        { facingMode: "environment" }, // Cámara trasera
+        { facingMode: "environment" },
         config,
         (decodedText, decodedResult) => {
-          console.log("QR detectado:", decodedText);
           alert("QR detectado: " + decodedText);
-          qrReader.stop(); // Detener después de escanear
+          qrReader.stop();
         },
         (errorMessage) => {
           console.warn("Error de escaneo:", errorMessage);
