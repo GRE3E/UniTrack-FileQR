@@ -1,72 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniTrack - Subir Archivo</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="icon" href="Upload-Icon-Image-Free-PNG.png" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UniTrack - Escanear QR</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="Upload-Icon-Image-Free-PNG.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-    <div class="container">
-        <div class="upload-card">
-            <div class="upload-icon">
-                <img src="subir archivo.gif" alt="Subir archivo" class="upload-gif">
-            </div>
-            <h2 class="upload-title">SUBIR ARCHIVO</h2>
-            <p class="subtext">Formatos soportados: PDF, JPG, PNG</p>
-            
-            <form id="uploadForm" class="dropzone">
-                <input type="file" id="fileInput" class="file-input" />
-                <label for="fileInput" class="upload-area">
-                    <div class="drag-overlay" id="dragOverlay"></div>
-                    <i class="fas fa-cloud-upload-alt upload-icon-large"></i>
-                    <span class="upload-cta">Seleccionar archivo</span>
-                    <span class="drag-text">o arrástralo aquí</span>
-                </label>
-            </form>
+  <div class="container">
+    <div class="upload-card">
+      <!-- TÍTULO -->
+        <h2 class="qr-title">Escanee un QR por favor</h2>
 
-            <div class="file-list-container" id="fileListContainer">
-                <!-- Los archivos seleccionados se añadirán aquí dinámicamente -->
-            </div>
 
-            <button class="send-button" id="sendFilesBtn" style="display: none;">Enviar Archivos</button>
-
-            <div class="upload-progress" id="uploadProgress">
-                <div class="progress-bar" id="progressBar"></div>
-                <div class="progress-text" id="progressText">0%</div>
-            </div>
-
-            <div class="error-message" id="errorMessage"></div>
-
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <p>Procesando...</p>
-            </div>
-        </div>
+      <!-- LECTOR QR -->
+       
+     <div class="qr-reader-container">
+    <div id="qr-reader"></div>
+  </div>
     </div>
+  </div>
 
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <div class="check-animation">
-                <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="26" cy="26" r="25" fill="#235bcb" stroke="#235bcb" stroke-width="2"/>
-                    <path d="M15 26L22 33L37 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <h2>¡Subida exitosa!</h2>
-            <p>Tu archivo se ha cargado correctamente.</p>
-            <button id="closeModal" class="modal-btn">Cerrar</button>
-        </div>
-    </div>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const qrReader = new Html5Qrcode("qr-reader");
+      const config = { fps: 10, qrbox: 250 };
 
-    <div style="margin-top:2rem;">
-        <button id="scanQrBtn" class="send-button" style="margin-bottom:1rem;">Escanear QR con cámara</button>
-        <div id="qr-reader" style="width: 100%; max-width: 400px; margin: 0 auto; display:none;"></div>
-    </div>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="script.js"></script>
+      qrReader.start(
+        { facingMode: "environment" }, // Cámara trasera
+        config,
+        (decodedText, decodedResult) => {
+          console.log("QR detectado:", decodedText);
+          alert("QR detectado: " + decodedText);
+          qrReader.stop(); // Detener después de escanear
+        },
+        (errorMessage) => {
+          console.warn("Error de escaneo:", errorMessage);
+        }
+      ).catch((err) => {
+        console.error("No se pudo iniciar el lector QR", err);
+      });
+    });
+  </script>
 </body>
 </html>
