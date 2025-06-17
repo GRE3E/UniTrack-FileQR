@@ -445,7 +445,7 @@ body {
 
 #qr-reader {
   width: 100%;
-  max-width: 400px;
+  max-width: 300px;
   aspect-ratio: 1/1;
   border-radius: 15px;
   overflow: hidden;
