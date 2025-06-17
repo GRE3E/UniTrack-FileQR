@@ -148,72 +148,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function uploadFiles() {
-        if (selectedFiles.length === 0) {
-            showErrorMessage('Por favor, selecciona al menos un archivo para enviar.');
-            return;
-        }
-
-        // Hide file list and show loading/progress
-        fileListContainer.innerHTML = ''; // Clear file list on send
-        sendFilesBtn.style.display = 'none';
-        errorMessage.classList.remove('active');
-        loadingSpinner.classList.remove('active');
-        uploadProgress.classList.add('active');
-        progressBar.style.width = '0%';
-        progressText.textContent = '0%';
-
-        let progress = 0;
-        const totalProgressSteps = 100 / selectedFiles.length; // Progress per file
-
-        let currentFileIndex = 0;
-
-        const simulateFileUpload = () => {
-            if (currentFileIndex < selectedFiles.length) {
-                // Simulate individual file upload progress if needed, for simplicity, we do overall progress
-                progress += totalProgressSteps;
-                if (progress > 100) progress = 100;
-
-                progressBar.style.width = progress + '%';
-                progressText.textContent = Math.round(progress) + '%';
-                currentFileIndex++;
-                setTimeout(simulateFileUpload, 500); // Simulate next file upload after 0.5 sec
-            } else {
-                // All files processed
-                uploadProgress.classList.remove('active');
-                showSuccessModal();
-                resetUploadState(); // Reset state after successful upload
-            }
-        };
-
-        setTimeout(simulateFileUpload, 500); // Start the first file upload simulation
-
-        // Here you would typically send files to the server using FormData and fetch/XMLHttpRequest
-        // Example (conceptual):
-        /*
-        const formData = new FormData();
-        selectedFiles.forEach(file => {
-            formData.append('files', file);
-        });
-
-        fetch('/upload-endpoint', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            loadingSpinner.classList.remove('active');
-            uploadProgress.classList.remove('active');
-            showSuccessModal();
-            resetUploadState();
-        })
-        .catch(error => {
-            loadingSpinner.classList.remove('active');
-            uploadProgress.classList.remove('active');
-            showErrorMessage('Error al subir los archivos: ' + error.message);
-            resetUploadState();
-        });
-        */
+    if (selectedFiles.length === 0) {
+        showErrorMessage('Por favor, selecciona al menos un archivo para enviar.');
+        return;
     }
+
+    // Solo permite una imagen para verificación de QR
+    const file = selectedFiles[0];
+    if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+        showErrorMessage('Solo se permiten imágenes PNG o JPG para verificar QR.');
+        return;
+    }
+
+    // Mostrar spinner
+    loadingSpinner.classList.add('active');
+    errorMessage.classList.remove('active');
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    fetch('https://unitrack-backend-h54d.onrender.com/qr/verificar', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(res => res.json())
+    .then(data => {
+        loadingSpinner.classList.remove('active');
+        if (data.usuario) {
+            // Muestra la información del usuario asociado al QR
+            showSuccessModal();
+            alert(
+                `Usuario: ${data.usuario.nombres} ${data.usuario.apellidos}\nCorreo: ${data.usuario.correo}`
+            );
+        } else {
+            showErrorMessage(data.error || 'No se encontró un usuario asociado a este código QR.');
+        }
+        resetUploadState();
+    })
+    .catch(error => {
+        loadingSpinner.classList.remove('active');
+        showErrorMessage('Error al conectar con el servidor: ' + error.message);
+        resetUploadState();
+    });
+}
 
     function showSuccessModal() {
         successModal.classList.add('active');
