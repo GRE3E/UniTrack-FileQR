@@ -285,3 +285,25 @@ document.addEventListener('DOMContentLoaded', () => {
         hideErrorMessage();
     }
 });
+
+window.addEventListener('DOMContentLoaded', () => {
+  const qrReader = new Html5Qrcode("qr-reader");
+  const config = { fps: 10, qrbox: 250 };
+  const cameraWarning = document.getElementById('cameraWarning');
+
+  qrReader.start(
+    { facingMode: "environment" },
+    config,
+    (decodedText, decodedResult) => {
+      alert("QR detectado: " + decodedText);
+      qrReader.stop();
+    },
+    (errorMessage) => {
+      // Puedes mostrar errores de escaneo aquí si quieres
+    }
+  ).catch((err) => {
+    // Mostrar el recuadro de advertencia si la cámara no está disponible
+    if (cameraWarning) cameraWarning.style.display = 'flex';
+    console.error("No se pudo iniciar el lector QR", err);
+  });
+});
