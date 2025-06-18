@@ -545,20 +545,3 @@ body {
   pointer-events: none;
   mix-blend-mode: screen;
 }
-.camera-warning {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  justify-content: center;
-}
-.camera-warning i {
-  font-size: 1.3rem;
-}
