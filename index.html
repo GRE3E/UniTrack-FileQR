@@ -36,27 +36,43 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      const qrReader = new Html5Qrcode("qr-reader");
-      const config = { fps: 10, qrbox: 250 };
-      const cameraWarning = document.getElementById('cameraWarning');
+  const qrReader = new Html5Qrcode("qr-reader");
+  const config = { fps: 10, qrbox: 250 };
+  const cameraWarning = document.getElementById('cameraWarning');
 
-      qrReader.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText, decodedResult) => {
-          alert("QR detectado: " + decodedText);
-          qrReader.stop();
-        },
-        (errorMessage) => {
-          console.warn("Error de escaneo:", errorMessage);
+  qrReader.start(
+    { facingMode: "environment" },
+    config,
+    (decodedText, decodedResult) => {
+      // Enviar el hash al backend para verificar y registrar en historial
+      fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hash: decodedText })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.mensaje) {
+          alert("QR válido: " + data.mensaje);
+        } else {
+          alert("Error: " + (data.error || "QR no válido."));
         }
-      ).catch((err) => {
-        if (cameraWarning) cameraWarning.style.display = 'flex';
-        // Opcional: ocultar el lector si hay error
-        document.getElementById('qr-reader').style.display = 'none';
-        console.error("No se pudo iniciar el lector QR", err);
+        qrReader.stop();
+      })
+      .catch(err => {
+        alert("Error al verificar el QR: " + err.message);
+        qrReader.stop();
       });
-    });
+    },
+    (errorMessage) => {
+      console.warn("Error de escaneo:", errorMessage);
+    }
+  ).catch((err) => {
+    if (cameraWarning) cameraWarning.style.display = 'flex';
+    document.getElementById('qr-reader').style.display = 'none';
+    console.error("No se pudo iniciar el lector QR", err);
+  });
+});
   </script>
 </body>
 </html>
