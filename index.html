@@ -36,43 +36,79 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-  const qrReader = new Html5Qrcode("qr-reader");
-  const config = { fps: 10, qrbox: 250 };
-  const cameraWarning = document.getElementById('cameraWarning');
+      const qrReader = new Html5Qrcode("qr-reader");
+      const config = { fps: 10, qrbox: 250 };
+      const cameraWarning = document.getElementById('cameraWarning');
+      const successModal = document.getElementById('successModal');
+      const errorModal = document.getElementById('errorModal');
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
 
-  qrReader.start(
-    { facingMode: "environment" },
-    config,
-    (decodedText, decodedResult) => {
-      // Enviar el hash al backend para verificar y registrar en historial
-      fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hash: decodedText })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.mensaje) {
-          alert("QR válido: " + data.mensaje);
-        } else {
-          alert("Error: " + (data.error || "QR no válido."));
+      function showModal(modal, messageElement, message) {
+        messageElement.textContent = message;
+        modal.classList.add('active');
+        setTimeout(() => {
+          modal.classList.remove('active');
+        }, 1000);
+      }
+
+      qrReader.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText, decodedResult) => {
+          // Enviar el hash al backend para verificar y registrar en historial
+          fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hash: decodedText })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.mensaje) {
+              showModal(successModal, successMessage, "QR válido: " + data.mensaje);
+            } else if (data.alreadyUsed) {
+              showModal(errorModal, errorMessage, data.error);
+            } else {
+              showModal(errorModal, errorMessage, "Error: " + (data.error || "QR no válido."));
+            }
+            qrReader.stop();
+          })
+          .catch(err => {
+            showModal(errorModal, errorMessage, "Error al verificar el QR: " + err.message);
+            qrReader.stop();
+          });
+        },
+        (errorMessage) => {
+          console.warn("Error de escaneo:", errorMessage);
         }
-        qrReader.stop();
-      })
-      .catch(err => {
-        alert("Error al verificar el QR: " + err.message);
-        qrReader.stop();
+      ).catch((err) => {
+        if (cameraWarning) cameraWarning.style.display = 'flex';
+        document.getElementById('qr-reader').style.display = 'none';
+        console.error("No se pudo iniciar el lector QR", err);
       });
-    },
-    (errorMessage) => {
-      console.warn("Error de escaneo:", errorMessage);
-    }
-  ).catch((err) => {
-    if (cameraWarning) cameraWarning.style.display = 'flex';
-    document.getElementById('qr-reader').style.display = 'none';
-    console.error("No se pudo iniciar el lector QR", err);
-  });
-});
+    });
   </script>
+
+  <!-- Modales -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="check-animation">
+        <svg viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      <p id="successMessage"></p>
+    </div>
+  </div>
+
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <div class="error-icon">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <p id="errorMessage"></p>
+    </div>
+  </div>
 </body>
 </html>
