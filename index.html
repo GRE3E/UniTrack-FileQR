@@ -44,6 +44,8 @@
       const successMessage = document.getElementById('successMessage');
       const errorMessage = document.getElementById('errorMessage');
 
+      let isProcessingQr = false; // New flag to prevent multiple simultaneous scans
+
       function showModal(modal, messageElement, message) {
         messageElement.textContent = message;
         modal.classList.add('active');
@@ -52,32 +54,52 @@
         }, 1000);
       }
 
+      const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        if (isProcessingQr) {
+          return; // Already processing a QR, ignore new scans
+        }
+        isProcessingQr = true; // Set flag to true
+
+        // Detener el escáner inmediatamente después de detectar un QR
+        qrReader.stop();
+
+        // Enviar el hash al backend para verificar y registrar en historial
+        fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hash: decodedText })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.mensaje) {
+            showModal(successModal, successMessage, "QR válido: " + data.mensaje);
+          } else if (data.alreadyUsed) {
+            showModal(errorModal, errorMessage, data.error);
+          } else {
+            showModal(errorModal, errorMessage, "Error: " + (data.error || "QR no válido."));
+          }
+        })
+        .catch(err => {
+          showModal(errorModal, errorMessage, "Error al verificar el QR: " + err.message);
+        })
+        .finally(() => {
+          isProcessingQr = false; // Reset flag
+          // Reiniciar el escáner después de que la promesa se resuelva o rechace
+          qrReader.start(
+            { facingMode: "environment" },
+            config,
+            qrCodeSuccessCallback, // Use the named function here
+            (errorMessage) => {
+              console.warn("Error de escaneo:", errorMessage);
+            }
+          );
+        });
+      };
+
       qrReader.start(
         { facingMode: "environment" },
         config,
-        (decodedText, decodedResult) => {
-          // Enviar el hash al backend para verificar y registrar en historial
-          fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ hash: decodedText })
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.mensaje) {
-              showModal(successModal, successMessage, "QR válido: " + data.mensaje);
-            } else if (data.alreadyUsed) {
-              showModal(errorModal, errorMessage, data.error);
-            } else {
-              showModal(errorModal, errorMessage, "Error: " + (data.error || "QR no válido."));
-            }
-            qrReader.stop();
-          })
-          .catch(err => {
-            showModal(errorModal, errorMessage, "Error al verificar el QR: " + err.message);
-            qrReader.stop();
-          });
-        },
+        qrCodeSuccessCallback, // Use the named function here
         (errorMessage) => {
           console.warn("Error de escaneo:", errorMessage);
         }
