@@ -34,5 +34,29 @@
   </div>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const qrReader = new Html5Qrcode("qr-reader");
+      const config = { fps: 10, qrbox: 250 };
+      const cameraWarning = document.getElementById('cameraWarning');
+
+      qrReader.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText, decodedResult) => {
+          alert("QR detectado: " + decodedText);
+          qrReader.stop();
+        },
+        (errorMessage) => {
+          console.warn("Error de escaneo:", errorMessage);
+        }
+      ).catch((err) => {
+        if (cameraWarning) cameraWarning.style.display = 'flex';
+        // Opcional: ocultar el lector si hay error
+        document.getElementById('qr-reader').style.display = 'none';
+        console.error("No se pudo iniciar el lector QR", err);
+      });
+    });
+  </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const successModal = document.getElementById('successModal');
     const closeModal = document.getElementById('closeModal');
     const scanQrBtn = document.getElementById('scanQrBtn');
-    // const qrReader = document.getElementById('qr-reader');
+    const qrReader = document.getElementById('qr-reader');
 
     let selectedFiles = [];
 
@@ -55,10 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
         resetUploadState();
     });
 
-    if (scanQrBtn) {
+    if (scanQrBtn && qrReader) {
         let html5QrCode;
         scanQrBtn.addEventListener('click', () => {
-            // qrReader.style.display = 'block';
+            qrReader.style.display = 'block';
             scanQrBtn.style.display = 'none';
             html5QrCode = new Html5Qrcode("qr-reader");
             html5QrCode.start(
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 qrCodeMessage => {
                     // Aquí tienes el contenido del QR escaneado
                     html5QrCode.stop();
-                    // qrReader.style.display = 'none';
+                    qrReader.style.display = 'none';
                     scanQrBtn.style.display = 'block';
                     // Puedes enviar el hash al backend para verificarlo
                     fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
@@ -284,47 +284,4 @@ document.addEventListener('DOMContentLoaded', () => {
         progressText.textContent = '0%';
         hideErrorMessage();
     }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  const qrReaderElem = document.getElementById('qr-reader');
-  const cameraWarning = document.getElementById('cameraWarning');
-
-  if (!qrReaderElem) return;
-
-  const qrReader = new Html5Qrcode("qr-reader");
-  const config = { fps: 10, qrbox: 250 };
-
-  qrReader.start(
-    { facingMode: "environment" },
-    config,
-    (decodedText, decodedResult) => {
-      // Enviar el hash al backend para verificar y registrar en historial
-      fetch('https://unitrack-backend-h54d.onrender.com/qr/verificarExpiracion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hash: decodedText })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.mensaje) {
-          alert("QR válido: " + data.mensaje);
-        } else {
-          alert("Error: " + (data.error || "QR no válido."));
-        }
-        qrReader.stop();
-      })
-      .catch(err => {
-        alert("Error al verificar el QR: " + err.message);
-        qrReader.stop();
-      });
-    },
-    (errorMessage) => {
-      console.warn("Error de escaneo:", errorMessage);
-    }
-  ).catch((err) => {
-    if (cameraWarning) cameraWarning.style.display = 'flex';
-    if (qrReaderElem) qrReaderElem.style.display = 'none';
-    console.error("No se pudo iniciar el lector QR", err);
-  });
 });
